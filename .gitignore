@@ -34,3 +34,6 @@ packages/server/prisma/*.db
 *.pem
 *.p12
 cert/
+
+# 微信开发者工具个人配置
+apps/miniapp/project.private.config.json
