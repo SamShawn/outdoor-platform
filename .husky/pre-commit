@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# 1. 对暂存文件运行 lint-staged（eslint --fix + prettier --write）
+pnpm exec lint-staged
+
+# 2. 全量类型检查（typecheck 无法只检查单文件，需全量）
+pnpm run typecheck
+
+# 3. 全量格式化检查（确保所有文件都符合 prettier 规范）
+pnpm run format:check
