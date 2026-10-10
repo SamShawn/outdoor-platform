@@ -1,0 +1,12 @@
+{
+  "name": "@outdoor/server",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "echo 'nest dev placeholder'",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@outdoor/shared": "workspace:*"
+  }
+}

@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+
+# env
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+
+# taro / miniapp
+packages/miniapp/.temp/
+packages/miniapp/.rn_temp/
+
+# prisma
+packages/server/prisma/*.db
+
+# certs（微信支付证书等）
+*.pem
+*.p12
+cert/

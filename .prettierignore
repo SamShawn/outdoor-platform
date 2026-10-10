@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+
+# taro
+packages/miniapp/.temp/
+packages/miniapp/.rn_temp/
+
+# prisma
+packages/server/prisma/migrations/
+
+# lockfile
+pnpm-lock.yaml
+
+# env
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+
+# certs
+*.pem
+*.p12
+cert/

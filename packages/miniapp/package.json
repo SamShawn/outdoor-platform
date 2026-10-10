@@ -1,0 +1,12 @@
+{
+  "name": "@outdoor/miniapp",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "echo 'taro dev placeholder'",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@outdoor/shared": "workspace:*"
+  }
+}
