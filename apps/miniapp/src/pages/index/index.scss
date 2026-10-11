@@ -1,7 +1,26 @@
 .index {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  font-size: 32px;
+  padding: 40px 30px;
+
+  .title {
+    display: block;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+
+  .result {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    Text {
+      font-size: 28px;
+      color: #333;
+    }
+  }
+
+  .error {
+    font-size: 28px;
+    color: #e64340;
+  }
 }
