@@ -1,9 +1,12 @@
+import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import 'dotenv/config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
   // 全局前缀，所有接口以 /api 开头
   app.setGlobalPrefix('api')
@@ -13,7 +16,7 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000
   await app.listen(port)
-  console.log(`Server running at <http://localhost:${port}/api/health>`)
+  console.log(`Server running at http://localhost:${port}/api/health`)
 }
 
 bootstrap()
