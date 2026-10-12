@@ -37,3 +37,5 @@ cert/
 
 # 微信开发者工具个人配置
 apps/miniapp/project.private.config.json
+
+apps/server/src/generated/
