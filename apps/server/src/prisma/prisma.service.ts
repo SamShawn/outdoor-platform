@@ -6,8 +6,6 @@ import { PrismaClient } from '../generated/prisma/client'
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     const url = new URL(process.env.DATABASE_URL!)
-    console.log('url: ', url)
-
     const adapter = new PrismaMariaDb({
       host: url.hostname,
       port: Number(url.port || 3306),
