@@ -12,6 +12,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       user: url.username,
       password: url.password,
       database: url.pathname.slice(1),
+      timezone: 'Z', // 强制连接时区为 UTC
     })
     super({ adapter })
   }
