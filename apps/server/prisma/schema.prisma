@@ -15,8 +15,10 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   openid    String   @unique
+  unionid   String?  @unique
   nickname  String?
   avatar    String?
+  phone     String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
