@@ -33,7 +33,8 @@
     "@tarojs/shared": "4.3.0",
     "@tarojs/taro": "4.3.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",

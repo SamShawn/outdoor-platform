@@ -1,35 +1,33 @@
-import { View, Text } from '@tarojs/components'
-import { useEffect, useState } from 'react'
-import { fetchHealth, HealthResponse } from '../../api/health'
+import { View, Text, Button } from '@tarojs/components'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { useUserStore } from '../../store/user'
 import './index.scss'
 
 export default function Index() {
-  const [health, setHealth] = useState<HealthResponse | null>(null)
-  const [error, setError] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(true)
+  const { isLoggedIn, user, logout } = useUserStore()
 
-  useEffect(() => {
-    fetchHealth()
-      .then((data) => setHealth(data))
-      .catch((e: Error) => setError(e.message))
-      .finally(() => setLoading(false))
-  }, [])
+  useDidShow(() => {
+    if (!isLoggedIn) {
+      Taro.redirectTo({ url: '/pages/login/index' })
+    }
+  })
+
+  const handleLogout = () => {
+    logout()
+    Taro.redirectTo({ url: '/pages/login/index' })
+  }
 
   return (
     <View className="index">
-      <Text className="title">后端连接状态</Text>
-
-      {loading && <Text>Loading...</Text>}
-
-      {health && (
-        <View className="result">
-          <Text>Status: {health.status}</Text>
-          <Text>Server time: {new Date(health.timestamp).toLocaleString()}</Text>
-          <Text>Uptime: {Math.floor(health.uptime)}s</Text>
+      <Text className="title">户外运动组局</Text>
+      {user ? (
+        <View>
+          <Text>欢迎，{user.nickname || '户外爱好者'}</Text>
+          <Button onClick={handleLogout}>退出登录</Button>
         </View>
+      ) : (
+        <Text>加载中...</Text>
       )}
-
-      {error && <Text className="error">Error: {error}</Text>}
     </View>
   )
 }
