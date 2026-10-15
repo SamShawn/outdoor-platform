@@ -1,16 +1,10 @@
 import { View, Text, Button } from '@tarojs/components'
-import Taro, { useDidShow } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { useUserStore } from '../../store/user'
 import './index.scss'
 
 export default function Index() {
-  const { isLoggedIn, user, logout } = useUserStore()
-
-  useDidShow(() => {
-    if (!isLoggedIn) {
-      Taro.redirectTo({ url: '/pages/login/index' })
-    }
-  })
+  const { user, logout } = useUserStore()
 
   const handleLogout = () => {
     logout()
