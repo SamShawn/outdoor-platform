@@ -1,9 +1,10 @@
 import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useUserStore } from '../../store/user'
+import { withAuth } from '../../components/withAuth'
 import './index.scss'
 
-export default function Index() {
+function Index() {
   const { user, logout } = useUserStore()
 
   const handleLogout = () => {
@@ -25,3 +26,5 @@ export default function Index() {
     </View>
   )
 }
+
+export default withAuth(Index)
