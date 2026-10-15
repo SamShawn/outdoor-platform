@@ -13,14 +13,47 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  openid    String   @unique
-  unionid   String?  @unique
-  nickname  String?
-  avatar    String?
-  phone     String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(cuid())
+  openid     String     @unique
+  unionid    String?    @unique
+  nickname   String?
+  avatar     String?
+  phone      String?    @unique
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@map("users")
+}
+
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  FULL
+  CANCELLED
+  FINISHED
+}
+
+model Activity {
+  id          String         @id @default(cuid())
+  title       String
+  description String?        @db.Text
+  cover       String?
+  startAt     DateTime
+  endAt       DateTime
+  location    String
+  latitude    Float?
+  longitude   Float?
+  quota       Int
+  enrolled    Int            @default(0)
+  price       Int            @default(0)
+  status      ActivityStatus @default(DRAFT)
+  organizerId String
+  organizer   User           @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status, startAt])
+  @@index([organizerId])
+  @@map("activities")
 }
