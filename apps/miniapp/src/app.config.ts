@@ -1,9 +1,9 @@
 export default defineAppConfig({
   pages: [
+    'pages/activity-list/index', // ← 启动页
     'pages/index/index',
     'pages/login/index',
     'pages/activity-create/index',
-    'pages/activity-list/index',
   ],
   window: {
     backgroundTextStyle: 'light',

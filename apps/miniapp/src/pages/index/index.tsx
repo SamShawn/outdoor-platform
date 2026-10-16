@@ -23,6 +23,9 @@ function Index() {
       {user ? (
         <View>
           <Text>欢迎，{user.nickname || '户外爱好者'}</Text>
+          <Button onClick={() => Taro.navigateTo({ url: '/pages/activity-list/index' })}>
+            浏览活动
+          </Button>
           <Button onClick={handleCreate}>发布活动</Button>
           <Button onClick={handleLogout}>退出登录</Button>
         </View>
