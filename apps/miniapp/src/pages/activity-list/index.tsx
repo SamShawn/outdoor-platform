@@ -3,13 +3,12 @@ import Taro, { useDidShow, usePullDownRefresh, useReachBottom } from '@tarojs/ta
 import { useState } from 'react'
 
 import { fetchActivities, Activity } from '../../api/activity'
-import { withAuth } from '../../components/withAuth'
 
 import './index.scss'
 
 const PAGE_SIZE = 10
 
-function ActivityList() {
+export default function ActivityList() {
   const [items, setItems] = useState<Activity[]>([])
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -116,5 +115,3 @@ function ActivityList() {
     </View>
   )
 }
-
-export default withAuth(ActivityList)
