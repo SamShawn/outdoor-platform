@@ -4,11 +4,16 @@
   "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
+    "dev:server": "pnpm --filter @outdoor/server run dev",
+    "dev:miniapp": "pnpm --filter @outdoor/miniapp run dev:weapp",
+    "db:studio": "pnpm --filter @outdoor/server exec prisma studio",
+    "db:migrate": "pnpm --filter @outdoor/server exec prisma migrate dev",
+    "db:generate": "pnpm --filter @outdoor/server exec prisma generate",
     "lint": "pnpm -r run lint",
     "typecheck": "pnpm -r run typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "list": "pnpm list --depth -1 -r"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
