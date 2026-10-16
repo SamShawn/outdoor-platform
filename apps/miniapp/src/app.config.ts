@@ -1,5 +1,10 @@
 export default defineAppConfig({
-  pages: ['pages/index/index', 'pages/login/index', 'pages/activity-create/index'],
+  pages: [
+    'pages/index/index',
+    'pages/login/index',
+    'pages/activity-create/index',
+    'pages/activity-list/index',
+  ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
