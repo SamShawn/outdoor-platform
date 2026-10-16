@@ -7,7 +7,7 @@ const BASE_URL = process.env.TARO_APP_API_BASE || 'http://localhost:3000/api'
 interface RequestOptions {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
-  data?: Record<string, unknown>
+  data?: unknown
   header?: Record<string, string>
   skipAuth?: boolean
 }
