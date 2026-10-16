@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro'
+
 import { getToken, clearToken } from '../utils/token'
 
 const BASE_URL = process.env.TARO_APP_API_BASE || 'http://localhost:3000/api'

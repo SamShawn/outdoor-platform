@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   IsString,
   IsNotEmpty,
@@ -8,7 +9,6 @@ import {
   Min,
   MaxLength,
 } from 'class-validator'
-import { Type } from 'class-transformer'
 
 export class CreateActivityDto {
   @IsString()

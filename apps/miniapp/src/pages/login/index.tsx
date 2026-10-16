@@ -1,6 +1,7 @@
 import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
+
 import { useUserStore } from '../../store/user'
 import './index.scss'
 

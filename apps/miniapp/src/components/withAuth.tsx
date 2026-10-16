@@ -1,6 +1,7 @@
 import { View } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { ComponentType, useState } from 'react'
+
 import { useUserStore } from '../store/user'
 
 export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {

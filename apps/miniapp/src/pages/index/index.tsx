@@ -1,7 +1,8 @@
 import { View, Text, Button } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useUserStore } from '../../store/user'
+
 import { withAuth } from '../../components/withAuth'
+import { useUserStore } from '../../store/user'
 import './index.scss'
 
 function Index() {

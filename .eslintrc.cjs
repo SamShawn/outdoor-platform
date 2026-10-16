@@ -1,9 +1,23 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  plugins: ['@typescript-eslint', 'import'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'prettier',
+  ],
   env: { node: true, es2022: true },
+  settings: {
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: ['./tsconfig.json', './apps/*/tsconfig.json', './packages/*/tsconfig.json'],
+      },
+    },
+  },
   ignorePatterns: [
     '**/dist/**',
     '**/lib/**',
@@ -17,9 +31,23 @@ module.exports = {
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
     'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        pathGroups: [
+          { pattern: '@/**', group: 'internal', position: 'before' },
+          { pattern: '@outdoor/**', group: 'internal', position: 'before' },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+        'newlines-between': 'always',
+        alphabetize: { order: 'asc', caseInsensitive: true },
+      },
+    ],
+    'import/newline-after-import': 'error',
+    'import/no-duplicates': 'error',
   },
   overrides: [
-    // 1. shared 包禁止导入平台包
     {
       files: ['packages/**/*.ts'],
       rules: {
@@ -35,7 +63,6 @@ module.exports = {
         ],
       },
     },
-    // 2. 小程序端启用 React 规则
     {
       files: ['apps/miniapp/**/*.{ts,tsx}'],
       plugins: ['react', 'react-hooks'],
@@ -47,7 +74,6 @@ module.exports = {
         'react-hooks/exhaustive-deps': 'warn',
       },
     },
-    // 3. 后端放宽 any 和 console
     {
       files: ['apps/server/**/*.ts'],
       rules: {

@@ -1,6 +1,8 @@
 import Taro from '@tarojs/taro'
-import { request } from './request'
+
 import { setToken } from '../utils/token'
+
+import { request } from './request'
 
 export interface LoginResponse {
   accessToken: string

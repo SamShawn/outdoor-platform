@@ -1,7 +1,8 @@
-import { PropsWithChildren } from 'react'
 import { useLaunch } from '@tarojs/taro'
-import { useUserStore } from './store/user'
+import { PropsWithChildren } from 'react'
+
 import { request } from './api/request'
+import { useUserStore } from './store/user'
 
 import './app.scss'
 

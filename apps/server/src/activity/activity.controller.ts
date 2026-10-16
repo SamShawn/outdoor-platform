@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard, type JwtPayload } from '../auth/guards/jwt-auth.guard'
+
 import { CurrentUser } from '../auth/decorators/current-user.decorator'
+import { JwtAuthGuard, type JwtPayload } from '../auth/guards/jwt-auth.guard'
+
 import { ActivityService } from './activity.service'
 import { CreateActivityDto } from './dto/create-activity.dto'
-import { UpdateActivityDto } from './dto/update-activity.dto'
 import { QueryActivityDto } from './dto/query-activity.dto'
+import { UpdateActivityDto } from './dto/update-activity.dto'
 
 @Controller('activities')
 export class ActivityController {
