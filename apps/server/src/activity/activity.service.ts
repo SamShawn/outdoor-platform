@@ -52,15 +52,33 @@ export class ActivityService {
 
     // 时间范围筛选
     if (timeRange === 'week') {
+      // 自然周：本周一 00:00:00 到 本周日 23:59:59
       const now = new Date()
-      const nextWeek = new Date()
-      nextWeek.setDate(now.getDate() + 7)
-      where.startAt = { gte: now, lte: nextWeek }
+      const day = now.getDay() || 7 // 周日 getDay() 返回 0，转成 7 方便计算
+
+      // 计算本周一
+      const startOfWeek = new Date(now)
+      startOfWeek.setDate(now.getDate() - day + 1)
+      startOfWeek.setHours(0, 0, 0, 0)
+
+      // 计算本周日结束
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(startOfWeek.getDate() + 6)
+      endOfWeek.setHours(23, 59, 59, 999)
+
+      where.startAt = { gte: startOfWeek, lte: endOfWeek }
     } else if (timeRange === 'month') {
+      // 自然月：当月 1 号 00:00:00 到 当月最后一天 23:59:59
       const now = new Date()
-      const nextMonth = new Date()
-      nextMonth.setMonth(now.getMonth() + 1)
-      where.startAt = { gte: now, lte: nextMonth }
+
+      // 计算当月 1 号
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+      // 计算当月最后一天（下个月的第 0 天就是本月最后一天）
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      endOfMonth.setHours(23, 59, 59, 999)
+
+      where.startAt = { gte: startOfMonth, lte: endOfMonth }
     }
 
     const [items, total] = await Promise.all([
