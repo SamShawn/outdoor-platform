@@ -54,24 +54,38 @@ function ActivityCreate() {
     if (!title.trim()) {
       return Taro.showToast({ title: '请填写标题', icon: 'none' })
     }
+
     if (!startDate || !startTime || !endDate || !endTime) {
       return Taro.showToast({ title: '请选择时间', icon: 'none' })
     }
+
+    // 1. 本地时间字符串
+    const localStart = `${startDate}T${startTime}:00`
+    const localEnd = `${endDate}T${endTime}:00`
+
+    // 2. 转换为 Date 对象，此时 JS 引擎会将其视为本地时间
+    const startDateObj = new Date(localStart)
+    const endDateObj = new Date(localEnd)
+
+    // 3. 使用 toISOString() 自动转换为 UTC 时间的标准格式
+    const startAt = startDateObj.toISOString()
+    const endAt = endDateObj.toISOString()
+
+    // 4. 校验时间先后
+    if (endAt <= startAt) {
+      return Taro.showToast({ title: '结束时间必须晚于开始时间', icon: 'none' })
+    }
+
     if (!location.trim()) {
       return Taro.showToast({ title: '请填写地点', icon: 'none' })
     }
+
     if (Number(quota) <= 0) {
       return Taro.showToast({ title: '名额必须大于 0', icon: 'none' })
     }
 
-    const startAt = `${startDate}T${startTime}:00.000Z`
-    const endAt = `${endDate}T${endTime}:00.000Z`
-
-    if (new Date(endAt) <= new Date(startAt)) {
-      return Taro.showToast({ title: '结束时间必须晚于开始时间', icon: 'none' })
-    }
-
     setSubmitting(true)
+
     try {
       await createActivity({
         title: title.trim(),
