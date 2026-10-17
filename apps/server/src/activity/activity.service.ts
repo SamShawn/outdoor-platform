@@ -52,33 +52,45 @@ export class ActivityService {
 
     // 时间范围筛选
     if (timeRange === 'week') {
-      // 自然周：本周一 00:00:00 到 本周日 23:59:59
-      const now = new Date()
-      const day = now.getDay() || 7 // 周日 getDay() 返回 0，转成 7 方便计算
+      // 1. 获取当前 UTC 时间戳，并 +8 小时，得到“东八区时间”
+      const nowInCST = new Date(Date.now() + 8 * 60 * 60 * 1000)
 
-      // 计算本周一
-      const startOfWeek = new Date(now)
-      startOfWeek.setDate(now.getDate() - day + 1)
-      startOfWeek.setHours(0, 0, 0, 0)
+      // 2. 算东八区的周一 00:00:00
+      const day = nowInCST.getUTCDay() || 7 // 周日转 7
+      const startOfWeekCST = new Date(nowInCST)
+      startOfWeekCST.setUTCDate(nowInCST.getUTCDate() - day + 1)
+      startOfWeekCST.setUTCHours(0, 0, 0, 0)
 
-      // 计算本周日结束
-      const endOfWeek = new Date(startOfWeek)
-      endOfWeek.setDate(startOfWeek.getDate() + 6)
-      endOfWeek.setHours(23, 59, 59, 999)
+      // 3. 算东八区的周日 23:59:59
+      const endOfWeekCST = new Date(startOfWeekCST)
+      endOfWeekCST.setUTCDate(startOfWeekCST.getUTCDate() + 6)
+      endOfWeekCST.setUTCHours(23, 59, 59, 999)
 
-      where.startAt = { gte: startOfWeek, lte: endOfWeek }
+      // 4. 把边界转回真正的 UTC 时间去查数据库（-8 小时）
+      const utcStart = new Date(startOfWeekCST.getTime() - 8 * 60 * 60 * 1000)
+      const utcEnd = new Date(endOfWeekCST.getTime() - 8 * 60 * 60 * 1000)
+
+      where.startAt = { gte: utcStart, lte: utcEnd }
     } else if (timeRange === 'month') {
-      // 自然月：当月 1 号 00:00:00 到 当月最后一天 23:59:59
-      const now = new Date()
+      // 1. 获取东八区时间
+      const nowInCST = new Date(Date.now() + 8 * 60 * 60 * 1000)
 
-      // 计算当月 1 号
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+      // 2. 算东八区的当月 1 号 00:00:00
+      const startOfMonthCST = new Date(
+        Date.UTC(nowInCST.getUTCFullYear(), nowInCST.getUTCMonth(), 1),
+      )
 
-      // 计算当月最后一天（下个月的第 0 天就是本月最后一天）
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-      endOfMonth.setHours(23, 59, 59, 999)
+      // 3. 算东八区的月末 23:59:59
+      const endOfMonthCST = new Date(
+        Date.UTC(nowInCST.getUTCFullYear(), nowInCST.getUTCMonth() + 1, 0),
+      )
+      endOfMonthCST.setUTCHours(23, 59, 59, 999)
 
-      where.startAt = { gte: startOfMonth, lte: endOfMonth }
+      // 4. 转回 UTC
+      const utcStart = new Date(startOfMonthCST.getTime() - 8 * 60 * 60 * 1000)
+      const utcEnd = new Date(endOfMonthCST.getTime() - 8 * 60 * 60 * 1000)
+
+      where.startAt = { gte: utcStart, lte: utcEnd }
     }
 
     const [items, total] = await Promise.all([
