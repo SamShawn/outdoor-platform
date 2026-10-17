@@ -50,6 +50,10 @@ export function fetchActivities(params: QueryActivityParams = {}) {
   })
 }
 
+export function fetchActivityDetail(id: string) {
+  return request<Activity>({ url: `/activities/${id}` })
+}
+
 export interface CreateActivityParams {
   title: string
   description?: string
