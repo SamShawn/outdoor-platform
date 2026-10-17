@@ -56,7 +56,7 @@ export default function ActivityDetail() {
       {/* 封面图 */}
       <Image
         className="detail__cover"
-        src={activity.cover || '<https://via.placeholder.com/750x400?text=No+Cover>'}
+        src={activity.cover || 'https://via.placeholder.com/750x400?text=No+Cover'}
         mode="aspectFill"
       />
 
@@ -86,7 +86,7 @@ export default function ActivityDetail() {
         <View className="detail__organizer">
           <Image
             className="detail__avatar"
-            src={activity.organizer.avatar || '<https://via.placeholder.com/80x80?text=U>'}
+            src={activity.organizer.avatar || 'https://via.placeholder.com/80x80?text=U'}
           />
           <Text className="detail__nickname">{activity.organizer.nickname || '户外爱好者'}</Text>
         </View>

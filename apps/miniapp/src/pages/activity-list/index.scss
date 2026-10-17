@@ -1,8 +1,52 @@
 .list {
   min-height: 100vh;
   background: #f5f5f5;
-  padding: 20px;
   box-sizing: border-box;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  &__search-box {
+    background: #f0f0f0;
+    border-radius: 30px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+
+  &__search-input {
+    height: 60px;
+    font-size: 28px;
+  }
+
+  &__filters {
+    white-space: nowrap;
+  }
+
+  &__filter-tag {
+    display: inline-block;
+    padding: 10px 30px;
+    font-size: 26px;
+    color: #666;
+    background: #f5f5f5;
+    border-radius: 20px;
+    margin-right: 20px;
+
+    &.active {
+      background: #2e7d32;
+      color: #fff;
+      font-weight: bold;
+    }
+  }
+
+  &__content {
+    padding: 20px;
+  }
 
   &__empty {
     display: flex;

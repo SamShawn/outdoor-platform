@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
 
+import { Prisma } from '../generated/prisma/client'
 import { ActivityStatus } from '../generated/prisma/enums'
 import { PrismaService } from '../prisma/prisma.service'
 
@@ -31,12 +32,35 @@ export class ActivityService {
   }
 
   async findAll(query: QueryActivityDto) {
-    const { page = 1, pageSize = 10, status, organizerId } = query
+    const { page = 1, pageSize = 10, status, keyword, isFree, timeRange } = query
     const skip = (page - 1) * pageSize
 
-    const where = {
-      ...(status && { status }),
-      ...(organizerId && { organizerId: String(organizerId) }),
+    const where: Prisma.ActivityWhereInput = {
+      // 默认只查已发布的活动
+      status: status || 'PUBLISHED',
+    }
+
+    // 关键词搜索
+    if (keyword) {
+      where.title = { contains: keyword }
+    }
+
+    // 免费筛选
+    if (isFree === 'true') {
+      where.price = 0
+    }
+
+    // 时间范围筛选
+    if (timeRange === 'week') {
+      const now = new Date()
+      const nextWeek = new Date()
+      nextWeek.setDate(now.getDate() + 7)
+      where.startAt = { gte: now, lte: nextWeek }
+    } else if (timeRange === 'month') {
+      const now = new Date()
+      const nextMonth = new Date()
+      nextMonth.setMonth(now.getMonth() + 1)
+      where.startAt = { gte: now, lte: nextMonth }
     }
 
     const [items, total] = await Promise.all([

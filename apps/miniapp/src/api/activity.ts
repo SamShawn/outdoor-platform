@@ -36,6 +36,9 @@ export interface QueryActivityParams {
   page?: number
   pageSize?: number
   status?: string
+  keyword?: string
+  isFree?: boolean
+  timeRange?: 'week' | 'month'
 }
 
 export function fetchActivities(params: QueryActivityParams = {}) {
@@ -43,6 +46,9 @@ export function fetchActivities(params: QueryActivityParams = {}) {
   if (params.page) query.set('page', String(params.page))
   if (params.pageSize) query.set('pageSize', String(params.pageSize))
   if (params.status) query.set('status', params.status)
+  if (params.keyword) query.set('keyword', params.keyword)
+  if (params.isFree !== undefined) query.set('isFree', String(params.isFree))
+  if (params.timeRange) query.set('timeRange', params.timeRange)
 
   const qs = query.toString()
   return request<ActivityListResponse>({

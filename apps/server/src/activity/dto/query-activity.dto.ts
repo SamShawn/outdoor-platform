@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer'
-import { IsOptional, IsInt, IsEnum, Min, Max } from 'class-validator'
+import { IsOptional, IsInt, IsEnum, Min, Max, IsString, IsBooleanString } from 'class-validator'
 
 import { ActivityStatus } from '../../generated/prisma/enums'
 
@@ -22,7 +22,14 @@ export class QueryActivityDto {
   status?: ActivityStatus
 
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  organizerId?: number
+  @IsString()
+  keyword?: string // 新增：标题模糊搜索
+
+  @IsOptional()
+  @IsBooleanString()
+  isFree?: string // 新增：是否免费
+
+  @IsOptional()
+  @IsString()
+  timeRange?: 'week' | 'month' // 新增：时间范围
 }
