@@ -1,13 +1,8 @@
 import { create } from 'zustand'
 
 import { login as apiLogin } from '../api/auth'
+import { UserInfo } from '../types'
 import { clearToken, getToken } from '../utils/token'
-
-export interface UserInfo {
-  id: string
-  nickname: string | null
-  avatar: string | null
-}
 
 interface UserState {
   user: UserInfo | null

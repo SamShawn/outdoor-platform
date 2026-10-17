@@ -3,9 +3,11 @@ import Taro, { useDidShow, usePullDownRefresh, useReachBottom } from '@tarojs/ta
 import { useState, useRef, useCallback } from 'react'
 
 import { fetchActivities, Activity, QueryActivityParams } from '../../api/activity'
+import { PAGE_SIZE } from '../../utils/constants'
+import { formatShortDateTime, formatPrice } from '../../utils/format'
+
 import './index.scss'
 
-const PAGE_SIZE = 10
 const FILTERS = [
   { label: '全部', params: {} },
   { label: '免费', params: { isFree: true } },
@@ -97,20 +99,6 @@ export default function ActivityList() {
     Taro.navigateTo({ url: '/pages/activity-create/index' })
   }
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso)
-    const month = d.getMonth() + 1
-    const day = d.getDate()
-    const hours = String(d.getHours()).padStart(2, '0')
-    const minutes = String(d.getMinutes()).padStart(2, '0')
-    return `${month}月${day}日 ${hours}:${minutes}`
-  }
-
-  const formatPrice = (price: number) => {
-    if (price === 0) return '免费'
-    return `¥${(price / 100).toFixed(2)}`
-  }
-
   return (
     <View className="list">
       {/* 顶部搜索和筛选固定区 */}
@@ -156,7 +144,7 @@ export default function ActivityList() {
             />
             <View className="list__info">
               <Text className="list__title">{item.title}</Text>
-              <Text className="list__meta">🕐 {formatDate(item.startAt)}</Text>
+              <Text className="list__meta">🕐 {formatShortDateTime(item.startAt)}</Text>
               <Text className="list__meta">📍 {item.location}</Text>
               <View className="list__bottom">
                 <Text className="list__price">{formatPrice(item.price)}</Text>

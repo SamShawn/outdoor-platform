@@ -3,6 +3,8 @@ import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 
 import { fetchActivityDetail, Activity } from '../../api/activity'
+import { formatDateTime, formatPrice } from '../../utils/format'
+
 import './index.scss'
 
 export default function ActivityDetail() {
@@ -35,16 +37,6 @@ export default function ActivityDetail() {
     Taro.showToast({ title: '报名功能开发中', icon: 'none' })
   }
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso)
-    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-  }
-
-  const formatPrice = (price: number) => {
-    if (price === 0) return '免费'
-    return `¥${(price / 100).toFixed(2)}`
-  }
-
   if (loading) {
     return <View className="detail__loading">加载中...</View>
   }
@@ -74,7 +66,7 @@ export default function ActivityDetail() {
         <View className="detail__info-item">
           <Text className="detail__info-label">时间</Text>
           <Text className="detail__info-value">
-            {formatDate(activity.startAt)} - {formatDate(activity.endAt)}
+            {formatDateTime(activity.startAt)} - {formatDateTime(activity.endAt)}
           </Text>
         </View>
         <View className="detail__info-item">

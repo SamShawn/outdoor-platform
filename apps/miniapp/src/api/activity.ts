@@ -1,3 +1,5 @@
+import { UserInfo } from '@/types'
+
 import { request } from './request'
 
 export interface Activity {
@@ -15,11 +17,7 @@ export interface Activity {
   price: number
   status: 'DRAFT' | 'PUBLISHED' | 'FULL' | 'CANCELLED' | 'FINISHED'
   organizerId: string
-  organizer: {
-    id: string
-    nickname: string | null
-    avatar: string | null
-  }
+  organizer: UserInfo
   createdAt: string
   updatedAt: string
 }

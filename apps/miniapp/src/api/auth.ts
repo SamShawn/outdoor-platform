@@ -1,16 +1,14 @@
 import Taro from '@tarojs/taro'
 
+import { UserInfo } from '@/types'
+
 import { setToken } from '../utils/token'
 
 import { request } from './request'
 
 export interface LoginResponse {
   accessToken: string
-  user: {
-    id: string
-    nickname: string | null
-    avatar: string | null
-  }
+  user: UserInfo
 }
 
 export function wxLogin(): Promise<string> {
