@@ -3,6 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common'
 
 import { Prisma } from '../generated/prisma/client'
@@ -15,6 +16,13 @@ interface ActivityRow {
   price: number
   quota: number
   enrolled: number
+  status: string
+}
+
+interface RawOrder {
+  id: string
+  userId: string
+  activityId: string
   status: string
 }
 
@@ -122,6 +130,56 @@ export class OrderService {
         }
         throw error
       }
+    })
+  }
+
+  /**
+   * 取消报名
+   */
+  async cancel(orderId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. 锁定订单记录 (行锁)
+      const orders = await tx.$queryRaw<RawOrder[]>`
+        SELECT id, userId, activityId, status
+        FROM orders
+        WHERE id = ${orderId}
+        FOR UPDATE
+      `
+
+      if (!orders || orders.length === 0) {
+        throw new NotFoundException('订单不存在')
+      }
+
+      const order = orders[0]
+
+      // 2. 校验权限：只能取消自己的订单
+      if (order.userId !== userId) {
+        throw new ForbiddenException('无权操作此订单')
+      }
+
+      // 3. 校验状态：只有待支付的订单可以取消
+      if (order.status !== 'PENDING') {
+        throw new BadRequestException('只有待支付的订单可以取消')
+      }
+
+      // 4. 更新订单状态为 CANCELLED
+      await tx.order.update({
+        where: { id: orderId },
+        data: {
+          status: 'CANCELLED',
+          cancelledAt: new Date(),
+        },
+      })
+
+      // 5. 释放活动名额 (确保 enrolled 不会减成负数)
+      await tx.activity.update({
+        where: { id: order.activityId },
+        data: {
+          enrolled: { decrement: 1 },
+        },
+      })
+
+      return { message: '取消报名成功' }
     })
   }
 }
