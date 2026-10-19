@@ -3,6 +3,8 @@ import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 
 import { fetchActivityDetail, Activity } from '../../api/activity'
+import { createOrder } from '../../api/order'
+import { useUserStore } from '../../store/user'
 import { formatDateTime, formatPrice } from '../../utils/format'
 
 import './index.scss'
@@ -12,6 +14,9 @@ export default function ActivityDetail() {
   const id = router.params.id
   const [activity, setActivity] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+
+  const { isLoggedIn } = useUserStore()
 
   useDidShow(() => {
     if (!id) return
@@ -33,8 +38,63 @@ export default function ActivityDetail() {
   }
 
   const handleEnroll = () => {
-    // 1.3 阶段实现报名功能
-    Taro.showToast({ title: '报名功能开发中', icon: 'none' })
+    if (!isLoggedIn) {
+      Taro.showToast({ title: '请先登录', icon: 'none' })
+      setTimeout(() => Taro.navigateTo({ url: '/pages/login/index' }), 1000)
+      return
+    }
+
+    if (!activity) return
+
+    // 前端前置拦截
+    if (activity.enrolled >= activity.quota) {
+      Taro.showToast({ title: '名额已满', icon: 'none' })
+      return
+    }
+
+    const now = new Date()
+    const deadline = new Date(new Date(activity.startAt).getTime() - 2 * 60 * 60 * 1000)
+    if (now >= deadline) {
+      Taro.showToast({ title: '报名已截止', icon: 'none' })
+      return
+    }
+
+    // 弹出确认框
+    Taro.showModal({
+      title: '确认报名',
+      content: `活动: ${activity.title}\n费用: ${formatPrice(activity.price)}`,
+      confirmText: '确认报名',
+      confirmColor: '#2e7d32',
+      success: async (res) => {
+        if (res.confirm) {
+          await submitOrder()
+        }
+      },
+    })
+  }
+
+  const submitOrder = async () => {
+    if (!activity) return
+    setSubmitting(true)
+    Taro.showLoading({ title: '报名中...', mask: true })
+
+    try {
+      await createOrder({ activityId: activity.id })
+      Taro.hideLoading()
+      Taro.showToast({ title: '报名成功', icon: 'success' })
+
+      // 更新详情页的名额显示
+      setActivity((prev) => (prev ? { ...prev, enrolled: prev.enrolled + 1 } : prev))
+
+      // TODO: 1.3.6 阶段将在此处跳转到支付流程
+    } catch (err) {
+      Taro.hideLoading()
+      const msg = err instanceof Error ? err.message : '报名失败'
+      // 后端返回的 409 等错误信息可能被包在 message 里
+      Taro.showToast({ title: msg, icon: 'none' })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (loading) {
@@ -42,6 +102,23 @@ export default function ActivityDetail() {
   }
 
   if (!activity) return null
+
+  // 判断按钮状态
+  const isFull = activity.enrolled >= activity.quota
+  const isEnded = new Date() >= new Date(new Date(activity.startAt).getTime() - 2 * 60 * 60 * 1000)
+
+  let btnText = '立即报名'
+  let btnDisabled = false
+  if (isFull) {
+    btnText = '名额已满'
+    btnDisabled = true
+  } else if (isEnded) {
+    btnText = '报名已截止'
+    btnDisabled = true
+  } else if (submitting) {
+    btnText = '提交中...'
+    btnDisabled = true
+  }
 
   return (
     <View className="detail">
@@ -96,8 +173,12 @@ export default function ActivityDetail() {
           <Text className="detail__bottom-label">费用</Text>
           <Text className="detail__bottom-value">{formatPrice(activity.price)}</Text>
         </View>
-        <Button className="detail__btn" onClick={handleEnroll}>
-          立即报名
+        <Button
+          className={`detail__btn ${btnDisabled ? 'detail__btn--disabled' : ''}`}
+          onClick={handleEnroll}
+          disabled={btnDisabled}
+        >
+          {btnText}
         </Button>
       </View>
     </View>

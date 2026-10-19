@@ -156,5 +156,10 @@
     &::after {
       border: none;
     }
+
+    &--disabled {
+      background: #ccc !important;
+      color: #fff !important;
+    }
   }
 }
