@@ -10,7 +10,7 @@ import { PrismaService } from '../prisma/prisma.service'
 
 import { CreateOrderDto } from './dto/create-order.dto'
 
-interface RawActivity {
+interface ActivityRow {
   id: string
   price: number
   quota: number
@@ -25,11 +25,55 @@ export class OrderService {
   async create(userId: string, dto: CreateOrderDto) {
     const { activityId } = dto
 
-    // 使用交互式事务
+    // ==========================================
+    // 1. 前置校验阶段（不加锁，并发量高时性能好）
+    // ==========================================
+
+    // (1) 检查活动是否存在及状态
+    const activity = await this.prisma.activity.findUnique({
+      where: { id: activityId },
+    })
+
+    if (!activity) {
+      throw new NotFoundException('活动不存在')
+    }
+
+    if (activity.status !== 'PUBLISHED') {
+      throw new BadRequestException('活动当前状态不可报名')
+    }
+
+    // (2) 检查是否已报名
+    const existingOrder = await this.prisma.order.findUnique({
+      where: {
+        userId_activityId: { userId, activityId },
+      },
+    })
+    if (existingOrder) {
+      throw new ConflictException('您已报名该活动，请勿重复提交')
+    }
+
+    // (3) 检查名额是否已满
+    if (activity.enrolled >= activity.quota) {
+      throw new BadRequestException('活动名额已满')
+    }
+
+    // (4) 检查是否在报名时间内（假设活动开始前 2 小时停止报名）
+    const now = new Date()
+    const deadline = new Date(activity.startAt.getTime() - 2 * 60 * 60 * 1000) // 开始前 2 小时截止
+    console.log('now: ', now)
+    console.log('deadline: ', deadline)
+
+    if (now >= deadline) {
+      throw new BadRequestException('报名已截止')
+    }
+
+    // ==========================================
+    // 2. 核心事务阶段（加锁，保证绝对不超卖）
+    // ==========================================
     return this.prisma.$transaction(async (tx) => {
-      // 1. 使用行锁锁定活动记录 (SELECT ... FOR UPDATE)
-      const activities = await tx.$queryRaw<RawActivity[]>`
-        SELECT id, title, price, quota, enrolled, status
+      // 使用行锁再次锁定活动记录，防止并发冲突
+      const activities = await tx.$queryRaw<ActivityRow[]>`
+        SELECT id, price, quota, enrolled, status
         FROM activities
         WHERE id = ${activityId}
         FOR UPDATE
@@ -39,52 +83,40 @@ export class OrderService {
         throw new NotFoundException('活动不存在')
       }
 
-      const activity = activities[0]
+      const lockedActivity = activities[0]
 
-      // 2. 校验活动状态
-      if (activity.status !== 'PUBLISHED') {
+      // 二次确认（防止在进入事务的几毫秒内被其他请求抢占）
+      if (lockedActivity.status !== 'PUBLISHED') {
         throw new BadRequestException('活动当前不可报名')
       }
-
-      // 3. 校验名额
-      if (activity.enrolled >= activity.quota) {
+      if (lockedActivity.enrolled >= lockedActivity.quota) {
         throw new BadRequestException('活动名额已满')
       }
 
-      // 4. 检查用户是否已经报过名（利用 Unique 约束之前先查一下，提供更友好的报错）
-      const existingOrder = await tx.order.findUnique({
-        where: {
-          userId_activityId: { userId, activityId },
-        },
-      })
-      if (existingOrder) {
-        throw new ConflictException('您已报名该活动')
-      }
-
-      // 5. 更新已报名人数 (+1)
+      // 扣减名额
       await tx.activity.update({
         where: { id: activityId },
         data: { enrolled: { increment: 1 } },
       })
 
-      // 6. 生成订单号 (简单实现：时间戳 + 随机数)
+      // 生成订单号
       const orderNo = `ORD${Date.now()}${Math.floor(Math.random() * 1000)
         .toString()
         .padStart(3, '0')}`
 
-      // 7. 创建订单
       try {
-        const order = await tx.order.create({
+        // 创建订单
+        return await tx.order.create({
           data: {
             orderNo,
             userId,
             activityId,
-            amount: activity.price,
+            amount: lockedActivity.price,
             status: 'PENDING',
           },
         })
-        return order
       } catch (error) {
+        // 兜底捕获并发唯一约束冲突
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
           throw new ConflictException('您已报名该活动')
         }
