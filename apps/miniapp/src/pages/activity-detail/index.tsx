@@ -3,7 +3,7 @@ import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 
 import { fetchActivityDetail, Activity } from '../../api/activity'
-import { createOrder } from '../../api/order'
+import { createOrder, fetchMyOrders, OrderInfo } from '../../api/order'
 import { useUserStore } from '../../store/user'
 import { formatDateTime, formatPrice } from '../../utils/format'
 
@@ -13,6 +13,7 @@ export default function ActivityDetail() {
   const router = useRouter()
   const id = router.params.id
   const [activity, setActivity] = useState<Activity | null>(null)
+  const [myOrder, setMyOrder] = useState<OrderInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
@@ -28,6 +29,16 @@ export default function ActivityDetail() {
     try {
       const data = await fetchActivityDetail(activityId)
       setActivity(data)
+
+      // 如果已登录，查一下是否报过名
+      if (isLoggedIn) {
+        const orders = await fetchMyOrders()
+        // 找当前活动的有效订单 (PENDING 或 PAID)
+        const activeOrder = orders.find(
+          (o) => o.activityId === activityId && (o.status === 'PENDING' || o.status === 'PAID'),
+        )
+        setMyOrder(activeOrder || null)
+      }
     } catch (err) {
       console.error('加载详情失败', err)
       Taro.showToast({ title: '活动不存在', icon: 'none' })
@@ -79,14 +90,10 @@ export default function ActivityDetail() {
     Taro.showLoading({ title: '报名中...', mask: true })
 
     try {
-      await createOrder({ activityId: activity.id })
-      Taro.hideLoading()
-      Taro.showToast({ title: '报名成功', icon: 'success' })
-
-      // 更新详情页的名额显示
+      const newOrder = await createOrder({ activityId: activity.id })
+      setMyOrder(newOrder) // 报名成功后记录下来
       setActivity((prev) => (prev ? { ...prev, enrolled: prev.enrolled + 1 } : prev))
-
-      // TODO: 1.3.6 阶段将在此处跳转到支付流程
+      Taro.showToast({ title: '报名成功', icon: 'success' })
     } catch (err) {
       Taro.hideLoading()
       const msg = err instanceof Error ? err.message : '报名失败'
@@ -103,13 +110,18 @@ export default function ActivityDetail() {
 
   if (!activity) return null
 
-  // 判断按钮状态
+  // 计算按钮状态
+  let btnText = '立即报名'
+  let btnDisabled = false
+
+  const isEnrolled = !!myOrder // 是否已报名
   const isFull = activity.enrolled >= activity.quota
   const isEnded = new Date() >= new Date(new Date(activity.startAt).getTime() - 2 * 60 * 60 * 1000)
 
-  let btnText = '立即报名'
-  let btnDisabled = false
-  if (isFull) {
+  if (isEnrolled) {
+    btnText = '您已报名'
+    btnDisabled = true
+  } else if (isFull) {
     btnText = '名额已满'
     btnDisabled = true
   } else if (isEnded) {
@@ -118,6 +130,14 @@ export default function ActivityDetail() {
   } else if (submitting) {
     btnText = '提交中...'
     btnDisabled = true
+  }
+
+  // 判断样式
+  let btnClass = 'detail__btn'
+  if (isEnrolled) {
+    btnClass += ' detail__btn--disabled detail__btn--enrolled'
+  } else if (btnDisabled) {
+    btnClass += ' detail__btn--disabled'
   }
 
   return (
@@ -173,11 +193,7 @@ export default function ActivityDetail() {
           <Text className="detail__bottom-label">费用</Text>
           <Text className="detail__bottom-value">{formatPrice(activity.price)}</Text>
         </View>
-        <Button
-          className={`detail__btn ${btnDisabled ? 'detail__btn--disabled' : ''}`}
-          onClick={handleEnroll}
-          disabled={btnDisabled}
-        >
+        <Button className={btnClass} onClick={handleEnroll} disabled={btnDisabled}>
           {btnText}
         </Button>
       </View>

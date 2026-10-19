@@ -1,4 +1,4 @@
-import { Controller, Post, Delete, Param, Body, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Delete, Param, Body, UseGuards } from '@nestjs/common'
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator'
 import { JwtAuthGuard, type JwtPayload } from '../auth/guards/jwt-auth.guard'
@@ -19,5 +19,10 @@ export class OrderController {
   @Delete(':id')
   cancel(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
     return this.orderService.cancel(id, user.sub)
+  }
+
+  @Get('my')
+  findMyOrders(@CurrentUser() user: JwtPayload) {
+    return this.orderService.findMyOrders(user.sub)
   }
 }

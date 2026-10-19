@@ -68,8 +68,6 @@ export class OrderService {
     // (4) 检查是否在报名时间内（假设活动开始前 2 小时停止报名）
     const now = new Date()
     const deadline = new Date(activity.startAt.getTime() - 2 * 60 * 60 * 1000) // 开始前 2 小时截止
-    console.log('now: ', now)
-    console.log('deadline: ', deadline)
 
     if (now >= deadline) {
       throw new BadRequestException('报名已截止')
@@ -180,6 +178,18 @@ export class OrderService {
       })
 
       return { message: '取消报名成功' }
+    })
+  }
+
+  async findMyOrders(userId: string) {
+    return this.prisma.order.findMany({
+      where: { userId },
+      include: {
+        activity: {
+          select: { id: true, title: true, cover: true, startAt: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     })
   }
 }

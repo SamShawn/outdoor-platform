@@ -157,9 +157,15 @@
       border: none;
     }
 
+    // 禁用状态（满员、已结束、已报名）
     &--disabled {
-      background: #ccc !important;
+      background: #b0bec5 !important; // 浅灰蓝，显得不那么死板
       color: #fff !important;
+    }
+
+    // 如果已报名，可以用主题色稍微淡化一点，表示成功状态
+    &--enrolled {
+      background: #81c784 !important; // 浅绿色
     }
   }
 }

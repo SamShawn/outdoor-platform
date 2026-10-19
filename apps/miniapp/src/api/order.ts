@@ -12,6 +12,16 @@ export interface OrderInfo {
   amount: number
   status: 'PENDING' | 'PAID' | 'CANCELLED' | 'REFUNDED'
   createdAt: string
+  activity?: {
+    id: string
+    title: string
+    cover: string | null
+    startAt: string
+  }
+}
+
+export function fetchMyOrders() {
+  return request<OrderInfo[]>({ url: '/orders/my' })
 }
 
 export function createOrder(data: CreateOrderParams) {
