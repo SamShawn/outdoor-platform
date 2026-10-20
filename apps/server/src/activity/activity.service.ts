@@ -31,6 +31,28 @@ export class ActivityService {
     })
   }
 
+  async findMyActivities(organizerId: string, page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize
+
+    const [items, total] = await Promise.all([
+      this.prisma.activity.findMany({
+        where: { organizerId },
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' }, // 我发起的活动按创建时间倒序
+      }),
+      this.prisma.activity.count({ where: { organizerId } }),
+    ])
+
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    }
+  }
+
   async findAll(query: QueryActivityDto) {
     const { page = 1, pageSize = 10, status, keyword, isFree, timeRange } = query
     const skip = (page - 1) * pageSize

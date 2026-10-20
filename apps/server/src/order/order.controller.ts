@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, UseGuards } from '@nestjs/common'
+import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards } from '@nestjs/common'
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator'
 import { JwtAuthGuard, type JwtPayload } from '../auth/guards/jwt-auth.guard'
@@ -21,8 +21,15 @@ export class OrderController {
     return this.orderService.cancel(id, user.sub)
   }
 
+  /**
+   * 获取我报名的活动列表
+   */
   @Get('my')
-  findMyOrders(@CurrentUser() user: JwtPayload) {
-    return this.orderService.findMyOrders(user.sub)
+  findMyOrders(
+    @CurrentUser() user: JwtPayload,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10',
+  ) {
+    return this.orderService.findMyOrders(user.sub, Number(page), Number(pageSize))
   }
 }

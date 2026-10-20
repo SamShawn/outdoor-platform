@@ -23,6 +23,19 @@ export class ActivityController {
     return this.activityService.findAll(query)
   }
 
+  /**
+   * 获取我发起的活动（包含草稿、已结束等所有状态）
+   */
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  findMyActivities(
+    @CurrentUser() user: JwtPayload,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10',
+  ) {
+    return this.activityService.findMyActivities(user.sub, Number(page), Number(pageSize))
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.activityService.findOne(id)
