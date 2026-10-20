@@ -28,6 +28,12 @@ export interface OrderListResponse {
   totalPages: number
 }
 
+export interface CheckEnrollmentResponse {
+  enrolled: boolean
+  orderId: string | null
+  status?: string
+}
+
 export function fetchMyOrders(params: { page?: number; pageSize?: number } = {}) {
   const query = new URLSearchParams()
   if (params.page) query.set('page', String(params.page))
@@ -50,5 +56,11 @@ export function cancelOrder(orderId: string) {
   return request<{ message: string }>({
     url: `/orders/${orderId}`,
     method: 'DELETE',
+  })
+}
+
+export function checkEnrollment(activityId: string) {
+  return request<CheckEnrollmentResponse>({
+    url: `/orders/check?activityId=${activityId}`,
   })
 }

@@ -3,7 +3,7 @@ import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 
 import { fetchActivityDetail, Activity } from '../../api/activity'
-import { createOrder, fetchMyOrders, OrderInfo } from '../../api/order'
+import { createOrder, checkEnrollment } from '../../api/order'
 import { useUserStore } from '../../store/user'
 import { formatDateTime, formatPrice } from '../../utils/format'
 
@@ -13,7 +13,7 @@ export default function ActivityDetail() {
   const router = useRouter()
   const id = router.params.id
   const [activity, setActivity] = useState<Activity | null>(null)
-  const [myOrder, setMyOrder] = useState<OrderInfo | null>(null)
+  const [isEnrolled, setIsEnrolled] = useState(false)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
@@ -27,17 +27,15 @@ export default function ActivityDetail() {
   const loadDetail = async (activityId: string) => {
     setLoading(true)
     try {
+      // 1. 拉取活动详情
       const data = await fetchActivityDetail(activityId)
       setActivity(data)
 
-      // 如果已登录，查一下是否报过名
+      // 2. 如果已登录，精准查询是否报名
       if (isLoggedIn) {
-        const res = await fetchMyOrders({ page: 1, pageSize: 50 })
-        // 找当前活动的有效订单 (PENDING 或 PAID)
-        const activeOrder = res.items.find(
-          (o) => o.activityId === activityId && (o.status === 'PENDING' || o.status === 'PAID'),
-        )
-        setMyOrder(activeOrder || null)
+        const checkRes = await checkEnrollment(activityId)
+        // 直接提取布尔值
+        setIsEnrolled(checkRes.enrolled)
       }
     } catch (err) {
       console.error('加载详情失败', err)
@@ -90,10 +88,16 @@ export default function ActivityDetail() {
     Taro.showLoading({ title: '报名中...', mask: true })
 
     try {
-      const newOrder = await createOrder({ activityId: activity.id })
-      setMyOrder(newOrder) // 报名成功后记录下来
-      setActivity((prev) => (prev ? { ...prev, enrolled: prev.enrolled + 1 } : prev))
+      await createOrder({ activityId: activity.id }) // 这里不需要用变量接收返回值了
+
+      Taro.hideLoading()
       Taro.showToast({ title: '报名成功', icon: 'success' })
+
+      // 1. 标记为已报名
+      setIsEnrolled(true)
+
+      // 2. 前端乐观更新，直接把名额 +1
+      setActivity((prev) => (prev ? { ...prev, enrolled: prev.enrolled + 1 } : prev))
     } catch (err) {
       Taro.hideLoading()
       const msg = err instanceof Error ? err.message : '报名失败'
@@ -114,7 +118,6 @@ export default function ActivityDetail() {
   let btnText = '立即报名'
   let btnDisabled = false
 
-  const isEnrolled = !!myOrder // 是否已报名
   const isFull = activity.enrolled >= activity.quota
   const isEnded = new Date() >= new Date(new Date(activity.startAt).getTime() - 2 * 60 * 60 * 1000)
 

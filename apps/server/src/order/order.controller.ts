@@ -32,4 +32,15 @@ export class OrderController {
   ) {
     return this.orderService.findMyOrders(user.sub, Number(page), Number(pageSize))
   }
+
+  /**
+   * 检查当前用户是否已报名某个活动
+   */
+  @Get('check')
+  checkEnrollment(@CurrentUser() user: JwtPayload, @Query('activityId') activityId: string) {
+    if (!activityId) {
+      return { enrolled: false }
+    }
+    return this.orderService.checkEnrollment(user.sub, activityId)
+  }
 }

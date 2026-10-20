@@ -214,4 +214,33 @@ export class OrderService {
       totalPages: Math.ceil(total / pageSize),
     }
   }
+
+  /**
+   * 检查用户是否已报名（或待支付）某个活动
+   */
+  async checkEnrollment(userId: string, activityId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        // 利用我们在 1.3.1 设计的唯一约束 (userId_activityId)
+        userId_activityId: { userId, activityId },
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    })
+
+    if (!order) {
+      return { enrolled: false, orderId: null }
+    }
+
+    // 只有 PENDING 和 PAID 算作有效报名
+    const isValid = order.status === 'PENDING' || order.status === 'PAID'
+
+    return {
+      enrolled: isValid,
+      orderId: isValid ? order.id : null,
+      status: order.status,
+    }
+  }
 }
