@@ -20,8 +20,22 @@ export interface OrderInfo {
   }
 }
 
-export function fetchMyOrders() {
-  return request<OrderInfo[]>({ url: '/orders/my' })
+export interface OrderListResponse {
+  items: OrderInfo[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export function fetchMyOrders(params: { page?: number; pageSize?: number } = {}) {
+  const query = new URLSearchParams()
+  if (params.page) query.set('page', String(params.page))
+  if (params.pageSize) query.set('pageSize', String(params.pageSize))
+  const qs = query.toString()
+  return request<OrderListResponse>({
+    url: `/orders/my${qs ? `?${qs}` : ''}`,
+  })
 }
 
 export function createOrder(data: CreateOrderParams) {

@@ -58,6 +58,16 @@ export function fetchActivityDetail(id: string) {
   return request<Activity>({ url: `/activities/${id}` })
 }
 
+export function fetchMyActivities(params: { page?: number; pageSize?: number } = {}) {
+  const query = new URLSearchParams()
+  if (params.page) query.set('page', String(params.page))
+  if (params.pageSize) query.set('pageSize', String(params.pageSize))
+  const qs = query.toString()
+  return request<ActivityListResponse>({
+    url: `/activities/my${qs ? `?${qs}` : ''}`,
+  })
+}
+
 export interface CreateActivityParams {
   title: string
   description?: string

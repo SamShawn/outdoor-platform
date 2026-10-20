@@ -172,6 +172,13 @@ export default function ActivityList() {
         <View className="list__fab" onClick={handleCreate}>
           <Text>+</Text>
         </View>
+
+        <View
+          className="list__profile-btn"
+          onClick={() => Taro.navigateTo({ url: '/pages/profile/index' })}
+        >
+          我的
+        </View>
       </View>
     </View>
   )

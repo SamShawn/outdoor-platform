@@ -32,9 +32,9 @@ export default function ActivityDetail() {
 
       // 如果已登录，查一下是否报过名
       if (isLoggedIn) {
-        const orders = await fetchMyOrders()
+        const res = await fetchMyOrders({ page: 1, pageSize: 50 })
         // 找当前活动的有效订单 (PENDING 或 PAID)
-        const activeOrder = orders.find(
+        const activeOrder = res.items.find(
           (o) => o.activityId === activityId && (o.status === 'PENDING' || o.status === 'PAID'),
         )
         setMyOrder(activeOrder || null)
