@@ -118,38 +118,57 @@ export default function Profile() {
 
   return (
     <View className="profile">
-      {/* 头部用户信息 */}
+      {/* 1. 顶部渐变背景与用户信息 */}
+      <View className="profile__header-bg" />
       <View className="profile__header">
-        <Image
-          className="profile__avatar"
-          src={user?.avatar || 'https://via.placeholder.com/100x100?text=Avatar'}
-        />
-        <View className="profile__info">
-          <Text className="profile__name">{user?.nickname || '户外爱好者'}</Text>
-          <Text className="profile__phone">{user?.phone || '未绑定手机号'}</Text>
+        <View className="profile__user-info">
+          <Image
+            className="profile__avatar"
+            src={user?.avatar || 'https://via.placeholder.com/150x150?text=User'}
+          />
+          <View className="profile__text-info">
+            <Text className="profile__name">{user?.nickname || '户外爱好者'}</Text>
+            <Text className="profile__phone">{user?.phone || '未绑定手机号'}</Text>
+          </View>
         </View>
+
         <Button className="profile__logout-btn" onClick={handleLogout}>
-          退出
+          退出登录
         </Button>
       </View>
 
-      {/* Tab 切换 */}
-      <View className="profile__tabs">
-        <View
-          className={`profile__tab ${activeTab === 'created' ? 'active' : ''}`}
-          onClick={() => handleTabChange('created')}
-        >
-          我发起的
+      {/* 2. 悬浮数据统计卡片 */}
+      <View className="profile__stats-card">
+        <View className="profile__stat-item">
+          <Text className="profile__stat-num">{createdItems.length}</Text>
+          <Text className="profile__stat-label">发起活动</Text>
         </View>
-        <View
-          className={`profile__tab ${activeTab === 'joined' ? 'active' : ''}`}
-          onClick={() => handleTabChange('joined')}
-        >
-          我报名的
+        <View className="profile__stat-divider" />
+        <View className="profile__stat-item">
+          <Text className="profile__stat-num">{joinedItems.length}</Text>
+          <Text className="profile__stat-label">参与活动</Text>
         </View>
       </View>
 
-      {/* 列表区域 */}
+      {/* 3. 切换 Tab */}
+      <View className="profile__tabs-wrapper">
+        <View className="profile__tabs">
+          <View
+            className={`profile__tab ${activeTab === 'created' ? 'active' : ''}`}
+            onClick={() => handleTabChange('created')}
+          >
+            我发起的
+          </View>
+          <View
+            className={`profile__tab ${activeTab === 'joined' ? 'active' : ''}`}
+            onClick={() => handleTabChange('joined')}
+          >
+            我报名的
+          </View>
+        </View>
+      </View>
+
+      {/* 4. 列表区域 */}
       <View className="profile__list">
         {activeTab === 'created' && (
           <View>
@@ -157,16 +176,16 @@ export default function Profile() {
               <View key={item.id} className="profile__card" onClick={() => goToDetail(item.id)}>
                 <Image
                   className="profile__card-cover"
-                  src={item.cover || 'https://via.placeholder.com/100x100?text=No+Image'}
+                  src={item.cover || 'https://via.placeholder.com/150x150?text=No+Image'}
                   mode="aspectFill"
                 />
                 <View className="profile__card-info">
                   <Text className="profile__card-title">{item.title}</Text>
-                  <Text className="profile__card-meta">{formatShortDateTime(item.startAt)}</Text>
+                  <Text className="profile__card-meta">🕐 {formatShortDateTime(item.startAt)}</Text>
                   <View className="profile__card-bottom">
                     <Text className="profile__card-price">{formatPrice(item.price)}</Text>
                     <Text className="profile__card-quota">
-                      {item.enrolled}/{item.quota} 人
+                      {item.enrolled}/{item.quota} 人已报名
                     </Text>
                   </View>
                 </View>
@@ -185,17 +204,28 @@ export default function Profile() {
               >
                 <Image
                   className="profile__card-cover"
-                  src={item.activity?.cover || 'https://via.placeholder.com/100x100?text=No+Image'}
+                  src={item.activity?.cover || 'https://via.placeholder.com/150x150?text=No+Image'}
                   mode="aspectFill"
                 />
                 <View className="profile__card-info">
-                  <Text className="profile__card-title">{item.activity?.title}</Text>
+                  <Text className="profile__card-title">
+                    {item.activity?.title || '活动已删除'}
+                  </Text>
                   <Text className="profile__card-meta">
-                    {formatShortDateTime(item.activity?.startAt || '')}
+                    🕐{' '}
+                    {item.activity?.startAt
+                      ? formatShortDateTime(item.activity.startAt)
+                      : '时间未知'}
                   </Text>
                   <View className="profile__card-bottom">
                     <Text className="profile__card-price">{formatPrice(item.amount)}</Text>
-                    <Text className="profile__card-status">{item.status}</Text>
+                    <Text className={`profile__card-status status-${item.status.toLowerCase()}`}>
+                      {item.status === 'PAID'
+                        ? '已支付'
+                        : item.status === 'PENDING'
+                          ? '待支付'
+                          : '已取消'}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -206,10 +236,10 @@ export default function Profile() {
         {/* 加载状态与空状态 */}
         {loading && <View className="profile__loading">加载中...</View>}
         {!loading && activeTab === 'created' && createdItems.length === 0 && (
-          <View className="profile__empty">还没有发起过活动</View>
+          <View className="profile__empty">还没有发起过活动哦~</View>
         )}
         {!loading && activeTab === 'joined' && joinedItems.length === 0 && (
-          <View className="profile__empty">还没有报名过活动</View>
+          <View className="profile__empty">还没有报名过活动哦~</View>
         )}
       </View>
     </View>
