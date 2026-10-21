@@ -104,9 +104,11 @@ export default function ActivityList() {
       {/* 顶部搜索和筛选固定区 */}
       <View className="list__header">
         <View className="list__search-box">
+          <Text className="list__search-icon">🔍</Text>
           <Input
             className="list__search-input"
-            placeholder="搜索活动标题"
+            placeholder="搜索想去的地方、活动..."
+            placeholderClass="list__search-placeholder"
             value={keyword}
             onInput={(e) => setKeyword(e.detail.value)}
             onConfirm={handleSearchConfirm}
@@ -114,7 +116,7 @@ export default function ActivityList() {
           />
         </View>
 
-        <ScrollView className="list__filters" scrollX enableFlex>
+        <ScrollView className="list__filters" scrollX enableFlex showScrollbar={false}>
           {FILTERS.map((f, index) => (
             <View
               key={f.label}
@@ -176,7 +178,7 @@ export default function ActivityList() {
 
         {/* 悬浮按钮 */}
         <View className="list__fab" onClick={handleCreate}>
-          <Text>+</Text>
+          <Text className="list__fab-icon">+</Text>
         </View>
       </View>
     </View>
