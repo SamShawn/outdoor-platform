@@ -139,18 +139,24 @@ export default function ActivityList() {
           <View key={item.id} className="list__item" onClick={() => handleDetail(item.id)}>
             <Image
               className="list__cover"
-              src={item.cover || 'https://via.placeholder.com/200x200?text=No+Image'}
+              src={item.cover || 'https://via.placeholder.com/400x300?text=No+Image'}
               mode="aspectFill"
             />
-            <View className="list__info">
+            {/* 封面上的渐变遮罩，让白色文字更清晰 */}
+            <View className="list__cover-mask" />
+
+            <View className="list__content">
+              <View className="list__tag-row">
+                <Text className="list__tag">{item.price === 0 ? '免费活动' : '付费活动'}</Text>
+                <Text className="list__quota">仅剩 {item.quota - item.enrolled} 席</Text>
+              </View>
               <Text className="list__title">{item.title}</Text>
-              <Text className="list__meta">🕐 {formatShortDateTime(item.startAt)}</Text>
               <Text className="list__meta">📍 {item.location}</Text>
-              <View className="list__bottom">
+              <Text className="list__meta">🕐 {formatShortDateTime(item.startAt)}</Text>
+
+              <View className="list__footer">
                 <Text className="list__price">{formatPrice(item.price)}</Text>
-                <Text className="list__quota">
-                  {item.enrolled}/{item.quota} 人
-                </Text>
+                <View className="list__btn">立即查看</View>
               </View>
             </View>
           </View>
