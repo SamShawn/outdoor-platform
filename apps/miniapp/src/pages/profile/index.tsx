@@ -12,7 +12,7 @@ import './index.scss'
 const PAGE_SIZE = 10
 
 export default function Profile() {
-  const { user, logout } = useUserStore()
+  const { user, isLoggedIn, logout } = useUserStore()
   const [activeTab, setActiveTab] = useState<'created' | 'joined'>('created')
 
   // 我发起的活动状态
@@ -62,6 +62,13 @@ export default function Profile() {
 
   // 切换 Tab 或首次进入时加载
   useDidShow(() => {
+    if (!isLoggedIn) {
+      // 未登录，直接跳到登录页（但不能用 redirectTo，用 reLaunch 或 navigateTo）
+      Taro.navigateTo({ url: '/pages/login/index' })
+      return
+    }
+
+    // 已登录，加载数据
     if (isFirstShow.current || activeTab === 'created') {
       loadCreated(1)
       isFirstShow.current = false
@@ -95,7 +102,8 @@ export default function Profile() {
       success: (res) => {
         if (res.confirm) {
           logout()
-          Taro.redirectTo({ url: '/pages/login/index' })
+          // 退出登录不需要 switchTab，直接回登录页
+          Taro.reLaunch({ url: '/pages/login/index' })
         }
       },
     })
@@ -104,6 +112,9 @@ export default function Profile() {
   const goToDetail = (id: string) => {
     Taro.navigateTo({ url: `/pages/activity-detail/index?id=${id}` })
   }
+
+  // 渲染部分：如果未登录，可以返回一个空 View
+  if (!isLoggedIn) return <View />
 
   return (
     <View className="profile">

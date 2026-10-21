@@ -15,7 +15,7 @@ export default function Login() {
       await login()
       Taro.showToast({ title: '登录成功', icon: 'success' })
       setTimeout(() => {
-        Taro.redirectTo({ url: '/pages/activity-list/index' })
+        Taro.switchTab({ url: '/pages/activity-list/index' })
       }, 800)
     } catch (err) {
       console.error('登录失败', err)
