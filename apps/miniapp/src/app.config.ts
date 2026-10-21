@@ -13,22 +13,22 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black',
   },
   tabBar: {
-    color: '#999999', // 未选中文字颜色
-    selectedColor: '#2e7d32', // 选中文字颜色
-    backgroundColor: '#ffffff', // 背景色
-    borderStyle: 'black', // 边框颜色
+    custom: true, // 👈 核心：开启官方自定义 TabBar
+    color: '#999999',
+    selectedColor: '#07c160',
+    backgroundColor: '#ffffff',
     list: [
       {
         pagePath: 'pages/activity-list/index',
         text: '发现',
-        iconPath: 'assets/tabbar/home.png',
-        selectedIconPath: 'assets/tabbar/home-active.png',
+        iconPath: 'assets/tabbar/explore.png',
+        selectedIconPath: 'assets/tabbar/explore-active.png',
       },
       {
         pagePath: 'pages/profile/index',
         text: '我的',
-        iconPath: 'assets/tabbar/user.png',
-        selectedIconPath: 'assets/tabbar/user-active.png',
+        iconPath: 'assets/tabbar/profile.png',
+        selectedIconPath: 'assets/tabbar/profile-active.png',
       },
     ],
   },

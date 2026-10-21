@@ -1,5 +1,6 @@
 export default definePageConfig({
-  navigationBarTitleText: '活动列表',
+  navigationBarTitleText: '发现',
+  usingComponents: {},
   enablePullDownRefresh: true,
   onReachBottomDistance: 50,
 })

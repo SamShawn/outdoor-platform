@@ -75,6 +75,10 @@ export default function ActivityList() {
 
   // 首次挂载 / 每次返回页面
   useDidShow(() => {
+    // 👇 强制通知 TabBar 组件：现在应该是第 0 项高亮
+    Taro.eventCenter.trigger('syncTabBar', 0)
+
+    // 接着加载数据
     loadData(1, true)
   })
 
@@ -93,10 +97,6 @@ export default function ActivityList() {
 
   const handleDetail = (id: string) => {
     Taro.navigateTo({ url: `/pages/activity-detail/index?id=${id}` })
-  }
-
-  const handleCreate = () => {
-    Taro.navigateTo({ url: '/pages/activity-create/index' })
   }
 
   return (
@@ -175,11 +175,6 @@ export default function ActivityList() {
             <Text>没有更多了</Text>
           </View>
         )}
-
-        {/* 悬浮按钮 */}
-        <View className="list__fab" onClick={handleCreate}>
-          <Text className="list__fab-icon">+</Text>
-        </View>
       </View>
     </View>
   )

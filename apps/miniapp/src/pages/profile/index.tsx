@@ -62,6 +62,9 @@ export default function Profile() {
 
   // 切换 Tab 或首次进入时加载
   useDidShow(() => {
+    // 👇 强制通知 TabBar 组件：现在应该是第 1 项高亮
+    Taro.eventCenter.trigger('syncTabBar', 1)
+
     if (!isLoggedIn) {
       // 未登录，直接跳到登录页（但不能用 redirectTo，用 reLaunch 或 navigateTo）
       Taro.navigateTo({ url: '/pages/login/index' })
