@@ -135,68 +135,88 @@ export default function ActivityDetail() {
     btnDisabled = true
   }
 
-  // 判断样式
-  let btnClass = 'detail__btn'
-  if (isEnrolled) {
-    btnClass += ' detail__btn--disabled detail__btn--enrolled'
-  } else if (btnDisabled) {
-    btnClass += ' detail__btn--disabled'
-  }
-
   return (
     <View className="detail">
-      {/* 封面图 */}
-      <Image
-        className="detail__cover"
-        src={activity.cover || 'https://via.placeholder.com/750x400?text=No+Cover'}
-        mode="aspectFill"
-      />
+      {/* 1. 顶部沉浸式大图 */}
+      <View className="detail__hero">
+        <Image
+          className="detail__cover"
+          src={activity.cover || 'https://via.placeholder.com/750x500?text=SportLink'}
+          mode="aspectFill"
+        />
+        <View className="detail__mask" />
+      </View>
 
-      <View className="detail__main">
-        {/* 基本信息 */}
-        <Text className="detail__title">{activity.title}</Text>
-        <View className="detail__price-row">
+      {/* 2. 核心信息卡片（使用负边距向上浮动，盖住一部分图片） */}
+      <View className="detail__card">
+        <View className="detail__header">
           <Text className="detail__price">{formatPrice(activity.price)}</Text>
-          <Text className="detail__quota">
-            {activity.enrolled}/{activity.quota} 人已报名
-          </Text>
+          <View className="detail__quota-tag">
+            <Text className="detail__quota-num">{activity.enrolled}</Text> / {activity.quota}{' '}
+            人已报名
+          </View>
         </View>
+        <Text className="detail__title">{activity.title}</Text>
+      </View>
 
-        {/* 时间与地点 */}
+      {/* 3. 时间与地点信息栏 */}
+      <View className="detail__info-card">
         <View className="detail__info-item">
-          <Text className="detail__info-label">时间</Text>
-          <Text className="detail__info-value">
-            {formatDateTime(activity.startAt)} - {formatDateTime(activity.endAt)}
-          </Text>
+          <View className="detail__icon">🕐</View>
+          <View className="detail__info-text">
+            <Text className="detail__label">活动时间</Text>
+            <Text className="detail__value">
+              {formatDateTime(activity.startAt)} - {formatDateTime(activity.endAt)}
+            </Text>
+          </View>
         </View>
+
+        <View className="detail__divider" />
+
         <View className="detail__info-item">
-          <Text className="detail__info-label">地点</Text>
-          <Text className="detail__info-value">{activity.location}</Text>
-        </View>
-
-        {/* 发起人 */}
-        <View className="detail__organizer">
-          <Image
-            className="detail__avatar"
-            src={activity.organizer.avatar || 'https://via.placeholder.com/80x80?text=U'}
-          />
-          <Text className="detail__nickname">{activity.organizer.nickname || '户外爱好者'}</Text>
-        </View>
-
-        {/* 活动详情 */}
-        <View className="detail__description">
-          <Text className="detail__section-title">活动详情</Text>
-          <Text className="detail__desc-text">{activity.description || '暂无详情'}</Text>
+          <View className="detail__icon">📍</View>
+          <View className="detail__info-text">
+            <Text className="detail__label">集合地点</Text>
+            <Text className="detail__value">{activity.location}</Text>
+          </View>
         </View>
       </View>
 
-      {/* 底部操作栏 */}
-      <View className="detail__bottom-bar">
-        <View className="detail__bottom-price">
-          <Text className="detail__bottom-label">费用</Text>
-          <Text className="detail__bottom-value">{formatPrice(activity.price)}</Text>
+      {/* 4. 发起人卡片 */}
+      <View className="detail__organizer-card">
+        <Image
+          className="detail__avatar"
+          src={activity.organizer.avatar || 'https://via.placeholder.com/100x100?text=User'}
+        />
+        <View className="detail__org-info">
+          <Text className="detail__org-name">{activity.organizer.nickname || '户外爱好者'}</Text>
+          <Text className="detail__org-role">活动发起人</Text>
         </View>
-        <Button className={btnClass} onClick={handleEnroll} disabled={btnDisabled}>
+      </View>
+
+      {/* 5. 活动详情描述 */}
+      <View className="detail__desc-card">
+        <Text className="detail__section-title">活动介绍</Text>
+        <Text className="detail__desc-text">
+          {activity.description || '发起人很懒，什么都没有写...'}
+        </Text>
+      </View>
+
+      {/* 占位，防止内容被底部操作栏挡住 */}
+      <View style={{ height: '160px' }} />
+
+      {/* 6. 底部毛玻璃操作栏 */}
+      <View className="detail__bottom-bar">
+        <View className="detail__bottom-left">
+          <Text className="detail__bottom-label">{isEnrolled ? '已成功报名' : '活动费用'}</Text>
+          <Text className="detail__bottom-price">{formatPrice(activity.price)}</Text>
+        </View>
+
+        <Button
+          className={`detail__btn ${isEnrolled ? 'detail__btn--enrolled' : btnDisabled ? 'detail__btn--disabled' : ''}`}
+          onClick={handleEnroll}
+          disabled={btnDisabled}
+        >
           {btnText}
         </Button>
       </View>

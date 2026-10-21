@@ -1,171 +1,261 @@
 .detail {
-  padding-bottom: 120px; // 留出底部操作栏的空间
-  background: #f5f5f5;
   min-height: 100vh;
+  background-color: var(--color-bg);
+  padding-bottom: env(safe-area-inset-bottom);
 
-  &__loading {
-    padding: 100px 0;
-    text-align: center;
-    color: #999;
+  // 1. 沉浸式头图
+  &__hero {
+    position: relative;
+    width: 100%;
+    height: 560px;
+    background: #e0e0e0;
   }
 
   &__cover {
     width: 100%;
-    height: 400px;
-    background: #e0e0e0;
+    height: 100%;
+    display: block;
   }
 
-  &__main {
-    background: #fff;
-    padding: 30px;
-    border-radius: 20px 20px 0 0;
-    margin-top: -20px;
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      transparent 40%,
+      rgba(247, 248, 250, 1) 100%
+    );
+  }
+
+  // 2. 核心信息卡片（上移，盖住渐变底边）
+  &__card {
     position: relative;
     z-index: 2;
+    margin: -60px 24px 24px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__price {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--color-accent);
+  }
+
+  &__quota-tag {
+    background: rgba(7, 193, 96, 0.1);
+    color: var(--color-primary);
+    font-size: 24px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  &__quota-num {
+    font-weight: 800;
+    font-size: 26px;
   }
 
   &__title {
     font-size: 40px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 800;
+    color: var(--color-text-main);
     line-height: 1.4;
-    margin-bottom: 20px;
   }
 
-  &__price-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #f0f0f0;
-    margin-bottom: 30px;
-  }
-
-  &__price {
-    font-size: 44px;
-    color: #e64340;
-    font-weight: bold;
-  }
-
-  &__quota {
-    font-size: 26px;
-    color: #888;
+  // 3. 时间地点卡片
+  &__info-card {
+    margin: 0 24px 24px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
   }
 
   &__info-item {
     display: flex;
-    margin-bottom: 20px;
     align-items: flex-start;
   }
 
-  &__info-label {
-    width: 80px;
-    font-size: 28px;
-    color: #666;
+  &__icon {
+    width: 64px;
+    height: 64px;
+    background: var(--color-bg);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-right: 24px;
     flex-shrink: 0;
   }
 
-  &__info-value {
+  &__info-text {
     flex: 1;
-    font-size: 28px;
-    color: #333;
   }
 
-  &__organizer {
+  &__label {
+    display: block;
+    font-size: 24px;
+    color: var(--color-text-sub);
+    margin-bottom: 8px;
+  }
+
+  &__value {
+    display: block;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--color-text-main);
+    line-height: 1.5;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 24px 0;
+  }
+
+  // 4. 发起人卡片
+  &__organizer-card {
+    margin: 0 24px 24px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 24px 32px;
+    box-shadow: var(--shadow-card);
     display: flex;
     align-items: center;
-    padding: 30px 0;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
-    margin: 30px 0;
   }
 
   &__avatar {
-    width: 60px;
-    height: 60px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    margin-right: 20px;
-    background: #eee;
+    margin-right: 24px;
+    background: #f0f0f0;
   }
 
-  &__nickname {
-    font-size: 28px;
-    color: #333;
+  &__org-info {
+    display: flex;
+    flex-direction: column;
   }
 
-  &__description {
-    margin-top: 20px;
+  &__org-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 6px;
+  }
+
+  &__org-role {
+    font-size: 24px;
+    color: var(--color-text-sub);
+  }
+
+  // 5. 活动介绍
+  &__desc-card {
+    margin: 0 24px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
   }
 
   &__section-title {
     display: block;
     font-size: 32px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 800;
+    color: var(--color-text-main);
     margin-bottom: 20px;
   }
 
   &__desc-text {
     font-size: 28px;
     color: #555;
-    line-height: 1.6;
+    line-height: 1.8;
+    white-space: pre-wrap; // 保留换行
   }
 
-  // 底部固定操作栏
+  // 6. 底部毛玻璃操作栏
   &__bottom-bar {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 110px;
-    background: #fff;
+    right: 0;
+    height: 130px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px); // 毛玻璃特效
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 0 30px;
-    box-sizing: border-box;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    padding: 0 40px;
+    padding-bottom: env(safe-area-inset-bottom);
     z-index: 100;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.05);
   }
 
-  &__bottom-price {
-    flex: 1;
+  &__bottom-left {
     display: flex;
     flex-direction: column;
   }
 
   &__bottom-label {
     font-size: 24px;
-    color: #888;
+    color: var(--color-text-sub);
+    margin-bottom: 4px;
   }
 
-  &__bottom-value {
-    font-size: 36px;
-    color: #e64340;
-    font-weight: bold;
+  &__bottom-price {
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--color-accent);
   }
 
   &__btn {
-    width: 240px;
-    height: 80px;
-    line-height: 80px;
-    background: #2e7d32;
+    margin: 0;
+    width: 320px;
+    height: 88px;
+    line-height: 88px;
+    background: var(--color-primary-gradient);
     color: #fff;
-    font-size: 30px;
-    border-radius: 40px;
+    font-size: 32px;
+    font-weight: 600;
+    border-radius: 44px;
+    box-shadow: 0 8px 16px rgba(7, 193, 96, 0.2);
 
     &::after {
       border: none;
     }
 
-    // 禁用状态（满员、已结束、已报名）
     &--disabled {
-      background: #b0bec5 !important; // 浅灰蓝，显得不那么死板
-      color: #fff !important;
+      background: #e0e0e0 !important;
+      color: #999 !important;
+      box-shadow: none !important;
     }
 
-    // 如果已报名，可以用主题色稍微淡化一点，表示成功状态
     &--enrolled {
-      background: #81c784 !important; // 浅绿色
+      background: rgba(7, 193, 96, 0.1) !important;
+      color: var(--color-primary) !important;
+      box-shadow: none !important;
     }
+  }
+
+  &__loading {
+    padding: 100px 0;
+    text-align: center;
+    color: var(--color-text-sub);
   }
 }
