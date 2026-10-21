@@ -1,107 +1,223 @@
 .create {
-  padding: 30px;
-  background: #f5f5f5;
   min-height: 100vh;
-  box-sizing: border-box;
+  background: #ffffff; // 发布页用纯白底显得更干净
+  display: flex;
+  flex-direction: column;
 
-  &__field {
-    background: #fff;
-    border-radius: 12px;
-    padding: 24px;
+  &__scroll-area {
+    flex: 1;
+    padding-bottom: 180px; // 留出底部按钮空间
+  }
+
+  // 1. 沉浸式封面上传
+  &__cover-uploader {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  &__cover-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &__cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f7f8fa;
+  }
+
+  &__cover-icon {
+    font-size: 80px;
     margin-bottom: 20px;
+    opacity: 0.5;
+  }
+  &__cover-text {
+    font-size: 30px;
+    color: var(--color-text-sub);
+  }
+
+  &__cover-edit {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 24px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  // 2. 大标题与描述
+  &__section {
+    padding: 40px 40px 0;
+  }
+
+  &__input-title {
+    width: 100%;
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--color-text-main);
+    line-height: 1.4;
+  }
+
+  &__input-desc {
+    width: 100%;
+    min-height: 120px;
+    font-size: 30px;
+    color: #444;
+    line-height: 1.6;
+  }
+
+  &__placeholder {
+    color: #bbb;
+    font-weight: normal;
+  }
+
+  // 3. 信息填写表单
+  &__form-group {
+    margin-top: 40px;
+    padding: 0 40px;
+  }
+
+  &__form-row {
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+
+    &--half {
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
 
   &__label {
-    display: block;
-    font-size: 28px;
-    color: #333;
-    margin-bottom: 16px;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 20px;
+  }
+
+  &__divider {
+    height: 1px;
+    background: #f0f0f0;
+  }
+
+  // 4. 时间选择
+  &__pickers {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  &__picker-item {
+    background: var(--color-bg);
+    color: var(--color-text-main);
+    font-size: 26px;
+    padding: 12px 24px;
+    border-radius: 12px;
     font-weight: 500;
   }
 
-  &__input {
-    width: 100%;
-    height: 60px;
-    font-size: 28px;
-    padding: 0 20px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    box-sizing: border-box;
-
-    &--flex {
-      flex: 1;
-    }
+  &__separator {
+    font-size: 24px;
+    color: #999;
   }
 
-  &__textarea {
-    width: 100%;
-    height: 200px;
-    font-size: 28px;
-    padding: 16px 20px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-
-  &__row {
+  // 5. 地点输入
+  &__loc-wrapper {
     display: flex;
-    gap: 20px;
     align-items: center;
+    gap: 20px;
   }
 
-  &__picker {
+  &__loc-input {
     flex: 1;
-    height: 60px;
-    line-height: 60px;
-    padding: 0 20px;
-    background: #f8f8f8;
-    border-radius: 8px;
     font-size: 28px;
-    color: #333;
-  }
-
-  &__cover {
-    width: 200px;
-    height: 200px;
-    border-radius: 8px;
-
-    &--empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f8f8f8;
-      border: 2px dashed #ccc;
-      color: #999;
-      font-size: 28px;
-    }
+    color: var(--color-text-main);
+    background: var(--color-bg);
+    padding: 16px 24px;
+    border-radius: 12px;
   }
 
   &__loc-btn {
-    height: 60px;
-    line-height: 60px;
-    font-size: 26px;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: rgba(7, 193, 96, 0.1);
     padding: 0 24px;
-    background: #2e7d32;
-    color: #fff;
-    border-radius: 8px;
+    height: 72px;
+    line-height: 72px;
+    border-radius: 12px;
+    flex-shrink: 0;
 
     &::after {
       border: none;
     }
   }
 
-  &__submit {
+  &__loc-icon {
+    margin-right: 6px;
+  }
+
+  // 6. 名额与价格
+  &__half-item {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__num-input {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: var(--color-bg);
+    padding: 16px 24px;
+    border-radius: 12px;
+  }
+
+  // 7. 吸底发布按钮
+  &__bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 24px 40px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+  }
+
+  &__submit-btn {
     width: 100%;
-    height: 88px;
-    line-height: 88px;
-    background: #2e7d32;
+    height: 96px;
+    line-height: 96px;
+    background: var(--color-primary-gradient);
     color: #fff;
-    font-size: 32px;
-    border-radius: 44px;
-    margin-top: 40px;
+    font-size: 34px;
+    font-weight: 800;
+    border-radius: 48px;
+    box-shadow: var(--shadow-float);
 
     &::after {
       border: none;
+    }
+
+    &[disabled] {
+      opacity: 0.7;
     }
   }
 }

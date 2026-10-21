@@ -113,113 +113,123 @@ function ActivityCreate() {
 
   return (
     <View className="create">
-      <View className="create__field">
-        <Text className="create__label">标题</Text>
-        <Input
-          className="create__input"
-          placeholder="给活动起个名字"
-          value={title}
-          onInput={(e) => setTitle(e.detail.value)}
-          maxlength={100}
-        />
-      </View>
-
-      <View className="create__field">
-        <Text className="create__label">描述</Text>
-        <Textarea
-          className="create__textarea"
-          placeholder="活动详情、注意事项"
-          value={description}
-          onInput={(e) => setDescription(e.detail.value)}
-          maxlength={500}
-        />
-      </View>
-
-      <View className="create__field">
-        <Text className="create__label">封面</Text>
-        {cover ? (
-          <Image
-            className="create__cover"
-            src={cover}
-            mode="aspectFill"
-            onClick={handleChooseImage}
-          />
-        ) : (
-          <View className="create__cover create__cover--empty" onClick={handleChooseImage}>
-            <Text>+ 选择图片</Text>
-          </View>
-        )}
-      </View>
-
-      <View className="create__field">
-        <Text className="create__label">开始时间</Text>
-        <View className="create__row">
-          <Picker mode="date" value={startDate} onChange={(e) => setStartDate(e.detail.value)}>
-            <View className="create__picker">{startDate || '选择日期'}</View>
-          </Picker>
-          <Picker mode="time" value={startTime} onChange={(e) => setStartTime(e.detail.value)}>
-            <View className="create__picker">{startTime || '选择时间'}</View>
-          </Picker>
+      <View className="create__scroll-area">
+        {/* 1. 沉浸式封面上传 */}
+        <View className="create__cover-uploader" onClick={handleChooseImage}>
+          {cover ? (
+            <Image className="create__cover-img" src={cover} mode="aspectFill" />
+          ) : (
+            <View className="create__cover-placeholder">
+              <Text className="create__cover-icon">📷</Text>
+              <Text className="create__cover-text">添加活动封面</Text>
+            </View>
+          )}
+          {cover && <View className="create__cover-edit">更换封面</View>}
         </View>
-      </View>
 
-      <View className="create__field">
-        <Text className="create__label">结束时间</Text>
-        <View className="create__row">
-          <Picker mode="date" value={endDate} onChange={(e) => setEndDate(e.detail.value)}>
-            <View className="create__picker">{endDate || '选择日期'}</View>
-          </Picker>
-          <Picker mode="time" value={endTime} onChange={(e) => setEndTime(e.detail.value)}>
-            <View className="create__picker">{endTime || '选择时间'}</View>
-          </Picker>
-        </View>
-      </View>
-
-      <View className="create__field">
-        <Text className="create__label">地点</Text>
-        <View className="create__row">
+        {/* 2. 大标题输入 */}
+        <View className="create__section">
           <Input
-            className="create__input create__input--flex"
-            placeholder="输入地点或地图选点"
-            value={location}
-            onInput={(e) => setLocation(e.detail.value)}
+            className="create__input-title"
+            placeholder="给活动起个响亮的名字..."
+            placeholderClass="create__placeholder"
+            value={title}
+            onInput={(e) => setTitle(e.detail.value)}
+            maxlength={50}
           />
-          <Button className="create__loc-btn" onClick={handleChooseLocation}>
-            地图
-          </Button>
+        </View>
+
+        {/* 3. 活动介绍 */}
+        <View className="create__section">
+          <Textarea
+            className="create__input-desc"
+            placeholder="详细介绍一下活动流程、注意事项..."
+            placeholderClass="create__placeholder"
+            value={description}
+            onInput={(e) => setDescription(e.detail.value)}
+            maxlength={1000}
+            autoHeight
+          />
+        </View>
+
+        {/* 4. 信息填写列表（无边框，极简） */}
+        <View className="create__form-group">
+          {/* 时间选择 */}
+          <View className="create__form-row">
+            <Text className="create__label">活动时间</Text>
+            <View className="create__pickers">
+              <Picker mode="date" value={startDate} onChange={(e) => setStartDate(e.detail.value)}>
+                <View className="create__picker-item">{startDate || '选择日期'}</View>
+              </Picker>
+              <Picker mode="time" value={startTime} onChange={(e) => setStartTime(e.detail.value)}>
+                <View className="create__picker-item">{startTime || '开始时间'}</View>
+              </Picker>
+              <Text className="create__separator">至</Text>
+              <Picker mode="date" value={endDate} onChange={(e) => setEndDate(e.detail.value)}>
+                <View className="create__picker-item">{endDate || '选择日期'}</View>
+              </Picker>
+              <Picker mode="time" value={endTime} onChange={(e) => setEndTime(e.detail.value)}>
+                <View className="create__picker-item">{endTime || '结束时间'}</View>
+              </Picker>
+            </View>
+          </View>
+
+          <View className="create__divider" />
+
+          {/* 地点 */}
+          <View className="create__form-row">
+            <Text className="create__label">集合地点</Text>
+            <View className="create__loc-wrapper">
+              <Input
+                className="create__loc-input"
+                placeholder="输入或在地图上选点"
+                placeholderClass="create__placeholder"
+                value={location}
+                onInput={(e) => setLocation(e.detail.value)}
+              />
+              <Button className="create__loc-btn" onClick={handleChooseLocation}>
+                <Text className="create__loc-icon">📍</Text> 地图选点
+              </Button>
+            </View>
+          </View>
+
+          <View className="create__divider" />
+
+          {/* 名额与价格 */}
+          <View className="create__form-row create__form-row--half">
+            <View className="create__half-item">
+              <Text className="create__label">招募人数</Text>
+              <Input
+                className="create__num-input"
+                type="number"
+                value={quota}
+                onInput={(e) => setQuota(e.detail.value)}
+              />
+            </View>
+            <View className="create__half-item">
+              <Text className="create__label">活动费用 (元)</Text>
+              <Input
+                className="create__num-input"
+                type="digit"
+                value={price}
+                onInput={(e) => setPrice(e.detail.value)}
+              />
+            </View>
+          </View>
         </View>
       </View>
 
-      <View className="create__field">
-        <Text className="create__label">名额</Text>
-        <Input
-          className="create__input"
-          type="number"
-          placeholder="活动人数上限"
-          value={quota}
-          onInput={(e) => setQuota(e.detail.value)}
-        />
+      {/* 5. 吸底发布按钮 */}
+      <View className="create__bottom-bar">
+        <Button
+          className="create__submit-btn"
+          loading={submitting}
+          disabled={submitting}
+          onClick={handleSubmit}
+        >
+          确认发布
+        </Button>
       </View>
-
-      <View className="create__field">
-        <Text className="create__label">价格（元）</Text>
-        <Input
-          className="create__input"
-          type="digit"
-          placeholder="0 表示免费"
-          value={price}
-          onInput={(e) => setPrice(e.detail.value)}
-        />
-      </View>
-
-      <Button
-        className="create__submit"
-        loading={submitting}
-        disabled={submitting}
-        onClick={handleSubmit}
-      >
-        发布活动
-      </Button>
     </View>
   )
 }
